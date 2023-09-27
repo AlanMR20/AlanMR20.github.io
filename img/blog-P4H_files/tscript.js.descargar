@@ -1,0 +1,1088 @@
+var SITE_URL = 'https://scarcity.shopiapps.in';
+var salesNm = 'SpSales';
+
+function ScarcityCountViews(pid){
+    spJQuery.ajax({
+        url: '/apps/ultimate-scarcity-pro/scarcity_countViews',
+        type: 'post',
+        dataType: 'json',
+        crossDomain: true,
+        data: {action: 'scarcity_countViews',pid: pid},
+        success: function (json) {
+            
+        }
+    });
+}
+
+function SP_timer(elem,d_type ='') {
+    
+    var id = elem;
+    var _second = 1000;
+    var _minute = _second * 60;
+    var _hour = _minute * 60;
+    var _day = _hour * 24
+    var temp = document.getElementById(id).getAttribute('temp');
+    var clock = document.getElementById(id);
+    var daysSpan = clock.querySelector('.days');
+
+    if(daysSpan){
+
+        var hoursSpan = clock.querySelector('.hours');
+        var minutesSpan = clock.querySelector('.minutes');
+        var secondsSpan = clock.querySelector('.seconds');
+        // Set the date we're counting down to
+
+        var server_end = parseInt(clock.getAttribute('e_date')) * 1000;
+        var start_now = parseInt(clock.getAttribute('s_date')) * 1000;
+        var server_now = parseInt(clock.getAttribute('server_t'))* 1000;
+       
+        var client_now = new Date().getTime();
+        var tid = clock.getAttribute('tid');
+        var t_type = clock.getAttribute('t_type');
+        var eday = parseInt(clock.getAttribute('day'));
+        var ehour = parseInt(clock.getAttribute('hour'));
+        var eminute = parseInt(clock.getAttribute('minute'));      
+        var countDownDate = server_end - server_now + client_now;
+        
+            // set bar ///
+        if(start_now > server_now){
+            return false;
+        }
+
+        // Update the count down every 1 second
+        
+        var x = setInterval(function () {
+            // Get todays date and time
+            var now = new Date().getTime();
+            // Find the distance between now an the count down date
+            var distance = countDownDate - now;
+
+            // Time calculations for days, hours, minutes and seconds
+            var days = Math.floor(distance / _day);
+            var hours = Math.floor((distance % _day) / _hour);
+            var minutes = Math.floor((distance % _hour) / _minute);
+            var seconds = Math.floor((distance % _minute) / _second);
+
+            // If the count down is over, write some text 
+          
+            if (distance < 0) {
+                clearInterval(x);
+                if (t_type == '1') {
+                    var start_date = new Date();
+                    var d = new Date();
+                    d.setDate(d.getDate() + eday);
+                    d.setHours(d.getHours() + ehour);
+                    d.setMinutes(d.getMinutes() + eminute);
+                    var end_date = d;
+
+                    var end_date_utc = new Date(end_date);
+                    end_date_utc = end_date_utc.toUTCString();
+                    start_date_utc = start_date.toUTCString();
+                    //if(d_type == 'timer')
+                    reset_timer(tid,end_date,end_date_utc,start_date_utc,start_date,id,d_type);
+                    
+                    
+                    if(d_type == 'banner') clock.style.display = 'inline';
+                    else clock.style.display = 'block';
+                } else {
+                    expire_timer(tid,d_type);
+
+                    clock.style.display = 'none';
+                    if(d_type == 'timer') document.getElementById('timer_main_div').style.display = 'none';
+                    if(d_type == 'banner'){
+                        document.getElementById('banner_div').style.display = 'none';
+                        spJQuery(document).find('body').removeClass('top-exist');
+                    }
+                    /*document.getElementById(id).parent().find('.discount_span').style.display = 'none';*/
+                }
+            }else{
+                if(d_type == 'timer') document.getElementById('timer_main_div').style.display = 'block';
+
+                if(d_type == 'banner') {
+                    document.getElementById('banner_div').style.display = 'block';  
+                    if(window.location.hostname != 'www.1gizmoatatime.com') spJQuery(document).find('body').addClass('top-exist');
+                }
+
+                if(temp == '5'){
+                    countdown(days,hours,minutes,seconds,id);
+                }
+                else{
+                    days = addZero(days);
+                    day_ary = days.toString().split('');
+                    var day_html = '';
+                    spJQuery.each(day_ary,function(k,v){
+                        day_html += "<span class='tdigit'>"+v+"</span>";
+                    });
+
+                    hours = addZero(hours);
+                    hr_ary = hours.toString().split('');
+                    var hr_html = '';
+                    spJQuery.each(hr_ary,function(k,v){
+                        hr_html += "<span class='tdigit'>"+v+"</span>";
+                    });
+                
+                    minutes = addZero(minutes);
+                    min_ary = minutes.toString().split('');
+                    var min_html = '';
+
+                    spJQuery.each(min_ary,function(k,v){
+                        min_html += "<span class='tdigit'>"+v+"</span>";
+                    });
+                    seconds = addZero(seconds);
+                    sec_ary = seconds.toString().split('');
+                    var sec_html = '';
+                    spJQuery.each(sec_ary,function(k,v){
+                        sec_html += "<span class='tdigit'>"+v+"</span>";
+                    });
+
+                    daysSpan.innerHTML =  day_html;
+                    hoursSpan.innerHTML =  hr_html;
+                    minutesSpan.innerHTML =  min_html;
+                    secondsSpan.innerHTML =  sec_html;  
+                }
+
+               if(d_type == 'timer') clock.style.display = 'block';
+               else clock.style.display = 'inline';
+                
+            }
+        }, 1000); 
+    }else{
+        var TimerDiv = document.getElementById('timer_main_div');
+        var progress_div = TimerDiv.querySelector('.progress_div');
+
+        if(progress_div)
+        document.getElementById('timer_main_div').style.display = 'block';
+    }
+}
+
+function SP_Stock_bar(elem){
+    var TimerDiv = document.getElementById('timer_main_div');
+    var progress_div = TimerDiv.querySelector('.progress_div');
+    if(progress_div)
+    document.getElementById('timer_main_div').style.display = 'block';
+}
+
+function SP_Shipping_timer(elem) {
+    var id = elem;
+    var _second = 1000;
+    var _minute = _second * 60;
+    var _hour = _minute * 60;
+    var _day = _hour * 24
+    var temp = document.getElementById(id).getAttribute('temp');
+    var clock = document.getElementById(id);
+    var daysSpan = clock.querySelector('.shipping_time');
+    if(daysSpan){
+        var server_end = parseInt(document.getElementById(id).getAttribute('e_date')) * 1000;
+        var start_now = parseInt(document.getElementById(id).getAttribute('s_date')) * 1000;
+        var server_now = parseInt(document.getElementById(id).getAttribute('server_t'))* 1000;
+       
+        var client_now = new Date().getTime();
+        var tid = document.getElementById(id).getAttribute('tid');
+        var t_type = document.getElementById(id).getAttribute('t_type');
+        
+        var ehour = parseInt(document.getElementById(id).getAttribute('hour'));
+        var eminute = parseInt(document.getElementById(id).getAttribute('minute'));    
+
+        var hour_lbl = document.getElementById(id).getAttribute('hour_lbl');
+        var min_lbl = document.getElementById(id).getAttribute('min_lbl');
+        var sec_lbl = document.getElementById(id).getAttribute('sec_lbl');
+
+        var countDownDate = server_end - server_now + client_now;
+
+    //console.log(hour_lbl);
+            // set bar ///
+            //console.log(start_now+ ">" + server_now);
+        if(start_now > server_now){
+            //console.log("false");
+            return false;
+        }
+
+        // Update the count down every 1 second
+    
+        var S = setInterval(function () {
+
+            // Get todays date and time
+            var now = new Date().getTime();
+            // Find the distance between now an the count down date
+            var distance = countDownDate - now;
+
+            // Time calculations for days, hours, minutes and seconds
+            var days = Math.floor(distance / _day);
+            var hours = Math.floor((distance % _day) / _hour);
+            var minutes = Math.floor((distance % _hour) / _minute);
+            var seconds = Math.floor((distance % _minute) / _second);
+            // If the count down is over, write some text 
+          
+            if (distance < 0) {
+                clearInterval(S);
+                reset_orderWithin();
+                document.getElementById(id).style.display = 'none';
+            }else{              
+                var time_goes = '';
+                if(hours != '0' && hours != '') time_goes += hours+" "+hour_lbl;
+                if(minutes != '0' || hours != '0') time_goes += ' '+minutes+" "+min_lbl;
+                if(seconds != '' || hours != '0' || minutes != '0') time_goes += ' '+seconds+" "+sec_lbl;
+                daysSpan.innerHTML = time_goes;
+            }
+        }, 900); 
+    }
+    
+}
+var remainStr = '';
+function countdown(d, h, m, s ,id) {
+    document.getElementById(id).style.display = "none";
+    var obj = spJQuery('#'+id);
+    
+    var $digitWidth = 36; 
+    var $digitHeight = 51; 
+    var d_length = (addZero(d).toString()).length;
+    var h_length = (addZero(h).toString()).length;
+    var m_length = (addZero(m).toString()).length;
+    var s_length = (addZero(s).toString()).length;
+
+    var str = addZero(d).toString() + addZero(h).toString() + addZero(m).toString() + addZero(s).toString(); 
+    
+    if (remainStr.length == 0) initScoreboard(obj,d_length,h_length,m_length,s_length,$digitWidth ,$digitHeight); 
+    for (var i=0; i<str.length; i++) {
+        if (str[i] != remainStr[i]) flip(obj,str[i], i); 
+    }
+
+    remainStr = str;
+    document.getElementById(id).style.display = "block";
+}
+
+function initScoreboard(obj,d_length,h_length,m_length,s_length,$digitWidth,$digitHeight) {
+    obj.find('.days').html('');
+    for (var i=0; i< d_length; i++) {
+        obj.find('.days').append('<div class="scdigit _' + i + '"><div class="scdigit-curr"></div><div class="scdigit-flip"></div><div class="scdigit-prev"></div></div>');
+    }
+    obj.find('.hours').html('');
+    for (var i=0; i< h_length; i++) {
+        obj.find('.hours').append('<div class="scdigit _' + i + '"><div class="scdigit-curr"></div><div class="scdigit-flip"></div><div class="scdigit-prev"></div></div>');
+    }
+    obj.find('.minutes').html('');
+    for (var i=0; i< m_length; i++) {
+        obj.find('.minutes').append('<div class="scdigit _' + i + '"><div class="scdigit-curr"></div><div class="scdigit-flip"></div><div class="scdigit-prev"></div></div>');
+    } 
+     obj.find('.seconds').html('');
+    for (var i=0; i< s_length; i++) {
+        obj.find('.seconds').append('<div class="scdigit _' + i + '"><div class="scdigit-curr"></div><div class="scdigit-flip"></div><div class="scdigit-prev"></div></div>');
+    } 
+
+    //obj.find('.npy-scwrap').css({ position: 'relative' });
+    obj.find('.scdigit').css({ position: 'relative',marginRight: '2px', width: $digitWidth, height: $digitHeight, backgroundImage: 'url('+SITE_URL+'/admin/assets/image/sc_digits.png)', backgroundSize: '1100%', backgroundPositionX: $digitWidth*(-10), backgroundPositionY: 0, backgroundRepeat: 'no-repeat', display: 'inline-block', verticalAlign: 'middle' });
+    obj.find('.scdigit > div').css({ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', backgroundImage: 'url('+SITE_URL+'/admin/assets/image/sc_digits.png)', backgroundSize: '1100%', backgroundPositionX: 0, backgroundRepeat: 'no-repeat', display: 'inline-block' });
+    obj.find('.scdigit-curr').css({ backgroundPositionY: 0, zIndex: 10 });
+    obj.find('.scdigit-flip').css({ backgroundPositionY: 0, zIndex: 20 });
+    obj.find('.scdigit-prev').css({ backgroundPositionY: '70%', zIndex: 10 });
+    
+}
+
+function flip(obj,str, i) { 
+    
+    obj.find('.scdigit').eq(i).find('.scdigit-curr').css({ backgroundPositionX:  str * 10 + '%' }); // 뒷장 변경
+
+    flipper(obj,i, 1); 
+
+    setTimeout(function() {
+        obj.find('.scdigit').eq(i).find('.scdigit-flip').css({ backgroundPositionX:  str * 10 + '%' }); // 플립 실행
+    }, 50*3); 
+
+    setTimeout(function() {
+        
+        obj.find('.scdigit').eq(i).find('.scdigit-prev').css({ backgroundPositionX:  str * 10 + '%' }); // 앞장 변경
+    }, 50*6); 
+}
+
+function flipper(obj,i, flipcnt) { 
+    if (flipcnt < 7) obj.find('.scdigit').eq(i).find('.scdigit-flip').css({ backgroundPositionY: flipcnt * 10 + '%' });
+    else obj.find('.scdigit').eq(i).find('.scdigit-flip').css({ backgroundPositionY: 0 }); 
+
+    setTimeout(function() {
+        if (flipcnt < 8) flipper(obj,i, flipcnt+1); 
+        else flipcnt = 0; 
+    }, 50);
+}
+
+function addZero(num) { 
+    return (num < 10) ? '0' + num : num;
+}
+
+function expire_timer(tid,d_type){
+    spJQuery.ajax({
+        url: '/apps/ultimate-scarcity-pro/expire_timer',
+        type: 'post',
+        dataType: 'json',
+        data: {action: 'expire_timer', tid: tid,d_type:d_type},
+        success: function (json) {
+            //alert(json.status);
+        }
+    });
+}
+
+function reset_orderWithin(){
+    spJQuery.ajax({
+        url: '/apps/ultimate-scarcity-pro/reset_orderWithin',
+        type: 'post',
+        dataType: 'html',
+        data: {action: 'reset_orderWithin'},
+        success: function (json) {
+            if(json !=''){
+                if(spJQuery(document.body).find("form[action='/cart/add'] [type=submit]").length > 0 ){
+                    spJQuery(document.body).find("#SP_shipping_div").replaceWith(json);
+                    SP_Shipping_timer('SP_shipping_div');
+                }
+            }
+        }
+    });
+}
+
+function reset_timer(tid, end_date,end_date_utc,start_date_utc,start_date,elem,d_type) {
+            
+    spJQuery.ajax({
+        url: '/apps/ultimate-scarcity-pro/reset_timer',
+        type: 'post',
+        dataType: 'json',
+        crossDomain: true,
+        data: {action: 'reset_timer',tid: tid,end_date:end_date,end_date_utc:end_date_utc,start_date_utc:start_date_utc,start_date:start_date,d_type:d_type},
+        success: function (json) {
+            var start_dt_utc = Math.floor((new Date(start_date_utc)).getTime()/1000);
+            var end_date_u = Math.floor((new Date(end_date_utc)).getTime() / 1000);
+            document.getElementById(elem).setAttribute('e_date', end_date_u);
+            document.getElementById(elem).setAttribute('s_date', start_dt_utc);
+            document.getElementById(elem).setAttribute('server_t', json.time);
+
+            SP_timer(elem,d_type);
+            //alert(json.status);
+        }
+    });
+}
+
+function progress_stock(elem,pid,timer_type,bar_type) {
+   console.log('Scarcity INIT');
+    var bar = document.getElementById("tstock_bar"); 
+    var stock_type = parseInt(document.getElementById(elem).getAttribute('stock_type'));
+    var start_inv = parseInt(document.getElementById(elem).getAttribute('st_from'));
+    var end_inv = parseInt(document.getElementById(elem).getAttribute('st_total'));
+    var sum = parseInt(document.getElementById(elem).getAttribute('sum'));
+    var bar_100 = document.getElementById(elem).getAttribute('bar_100');
+    var bar_50 = document.getElementById(elem).getAttribute('bar_50');
+    var bar_25 = document.getElementById(elem).getAttribute('bar_25');
+    var default_env = end_inv;
+    if(isNaN(end_inv)) end_inv = 0;
+    if(isNaN(start_inv)) start_inv = 0;
+    if(isNaN(stock_type)) stock_type = 0;
+
+    if(stock_type == '0' && sum > 0){
+        /*if(sum < 10){
+            end_inv = 100;
+            start_inv = 20;
+        }else{*/
+            end_inv = sum;
+            start_inv = Math.floor((parseInt(end_inv) * 20)/100);
+        //}
+    }
+
+    var rand = Math.floor(Math.random() * 80000) + 60000;
+    var width = 100;
+    var width_dec = 0;
+    var start_width = 0;
+
+    if(start_inv != 0){
+        start_width = (start_inv*100)/end_inv;
+    }
+    
+    end_inv = start_inv;
+    width =  start_width;
+
+    if(end_inv != 0){
+        width_dec = width/end_inv;
+        width_dec = parseFloat(width_dec).toFixed(2);
+        width_dec = parseFloat(width_dec);
+    }
+
+    /*if (typeof getCookie(pid+'bar_width') === 'undefined' || getCookie(pid+'bar_width') == '' || getCookie(pid+'bar_width') === null){
+      
+        createCookie(pid+'timer_end_inv',end_inv);
+        createCookie(pid+'timer_end_inv_default',default_env);
+        createCookie(pid+'timer_start_inv_default',start_inv);
+        createCookie(pid+'bar_width',width);
+
+    } else {
+
+        var start_inv_default =  getCookie(pid+'timer_start_inv_default');
+        var end_inv_default =  getCookie(pid+'timer_end_inv_default');
+
+        if(start_inv_default != start_inv || end_inv_default != default_env){
+            console.log(start_inv_default,start_inv,end_inv_default,end_inv);
+            set_default_cookie(); 
+            return false;          
+        }
+
+        end_inv =  getCookie(pid+'timer_end_inv');
+        width = parseInt(getCookie(pid+'bar_width'));
+    }*/
+    
+    if(end_inv == '0' && timer_type != '1' && (typeof spJQuery(document).find('.sa_clockdiv').length == 'undefined' || spJQuery(document).find('.sa_clockdiv').length == 0)){
+        spJQuery(bar).parents('.tmain_div').hide(); 
+        return false;
+    } 
+   
+    color = barColor(width);
+
+    if(end_inv <= 0 || end_inv == null || end_inv == ''){
+        width = 0;
+        color = 'transparent';
+        end_inv = 0;
+        spJQuery('#'+elem).remove(); 
+    }
+
+    if(bar_type == 'stick'){
+        bar.style.width = width + '%'; 
+        bar.style.background = color; 
+        if(spJQuery.isNumeric(end_inv)) spJQuery(bar).parents('.progress_div').find('.bar_text').html(end_inv+' left');
+    }else{
+        var opts = {
+            backgroundColor: '#d6d6d7',
+            progressColor: color,
+            percent: width,
+            duration: 500,
+            env : end_inv
+        };
+
+        progress_round_bar(opts,elem);
+    }
+    
+    //var id = setInterval(frame, rand);
+    
+    function frame() {
+        rand_w  = Math.floor(Math.random() * (3) + 1);
+        width   = parseFloat(width - (rand_w * width_dec)).toFixed(2);
+        e_rand  = Math.round(rand_w);
+        end_inv = Math.round(parseFloat(end_inv) - parseFloat(e_rand));
+        if (end_inv <= 0 || width <= 0 || end_inv == '') {
+            
+            if(bar_type == 'stick'){
+                bar.style.width = width + '%'; 
+                bar.style.background = color; 
+                if(spJQuery.isNumeric(end_inv)) spJQuery(bar).parents('.progress_div').find('.bar_text').html(end_inv+' left');
+            }else{
+                var opts = {
+                    backgroundColor: '#d6d6d7',
+                    progressColor: color,
+                    percent: width,
+                    duration: 500,
+                };
+
+                progress_round_bar(opts,elem);
+            }
+            
+            if(timer_type == '1'){
+               
+                /*setCookie(pid+'timer_end_inv','');
+                setCookie(pid+'bar_width','');*/
+                setTimeout('progress_stock("'+elem+'",'+pid+','+timer_type+',"'+bar_type+'")',3000);
+            }else{
+                /*setCookie(pid+'timer_end_inv' , 0);
+                setCookie(pid+'bar_width',0);*/
+
+                if(typeof spJQuery(document).find('.sa_clockdiv').length == 'undefined' || spJQuery(document).find('.sa_clockdiv').length == 0){
+                    spJQuery(bar).parents('.tmain_div').hide(); 
+                }
+                spJQuery('#'+elem).remove(); 
+            }
+            clearInterval(id);
+
+        }else {
+            color = barColor(width);
+            /*setCookie(pid+'timer_end_inv',end_inv);
+            setCookie(pid+'bar_width',width);*/
+
+            if(bar_type == 'stick'){
+                bar.style.width = width + '%'; 
+                bar.style.background = color; 
+                if(spJQuery.isNumeric(end_inv)) spJQuery(bar).parents('.progress_div').find('.bar_text').html(end_inv+' left');
+            }else{
+                var opts = {
+                    backgroundColor: '#d6d6d7',
+                    progressColor: color,
+                    percent: width,
+                    duration: 500,
+                    env:end_inv,
+                };
+                progress_round_bar(opts,elem);
+            }
+        }
+    }
+    function set_default_cookie(){
+        /*setCookie(pid+'timer_end_inv',end_inv);
+        setCookie(pid+'timer_end_inv_default',default_env);
+        setCookie(pid+'timer_start_inv_default',start_inv);
+        setCookie(pid+'bar_width',width);*/
+        
+        progress_stock(elem,pid,timer_type,bar_type);
+
+        return false;
+    }
+    function barColor(w){
+        var color = bar_25;
+
+        if(w > 50 ){
+            color = bar_100;
+        }else if(w > 25 && w <= 50){
+            color = bar_50;
+        }
+        return color;
+    }
+}
+
+function progress_round_bar(opts,elem){
+   
+    var $target  = spJQuery('#'+elem);
+    var already = spJQuery(document).find('#'+elem+' .background').html();
+
+    if(typeof opts.env == 'undefined' || opts.env == ''){
+        opts.env = '0'; 
+    }
+
+    if(typeof already == 'undefined'){
+        $target.append('<div class="background"></div><div class="rotate"></div><div class="left"></div><div class="right"></div><div class=""><span id="round_text">' + opts.env + ' left</span></div>');
+    }else{
+        spJQuery(document).find('#'+elem+' #round_text').text(opts.env+' left');
+    }
+
+    $target.find('.background').css('background-color', opts.backgroundColor);
+    $target.find('.left').css('background-color', opts.backgroundColor);
+    $target.find('.rotate').css('background-color', opts.progressColor);
+    $target.find('.right').css('background-color', opts.progressColor);
+
+    var $rotate = $target.find('.rotate');
+    
+    $rotate.css({
+        'transition': 'transform 0ms linear',
+        'transform': 'rotate(' + opts.percent * 3.6 + 'deg)'
+    });     
+
+    var animationRight = 'toggle ' + (opts.duration / opts.percent * 50) + 'ms step-end';
+    var animationLeft = 'toggle ' + (opts.duration / opts.percent * 50) + 'ms step-start';  
+    if (opts.percent > 50) {
+        $target.find('.right').css({
+            animation: animationRight,
+            opacity: 1
+        });
+        $target.find('.left').css({
+            animation: animationLeft,
+            opacity: 0
+        });
+    } else{ 
+        $target.find('.right').css({
+            animation: animationRight,
+            opacity: 0
+        });
+        $target.find('.left').css({
+            animation: animationLeft,
+            opacity: 1
+        });
+    }
+} 
+
+var createCookie = function(name, value) {
+    var expires = '';
+    document.cookie = name + "=" + value + expires + "; path=/";
+}
+
+function setCookie(c_name,value)
+{
+    var c_value = escape(value);
+        document.cookie=c_name + "=" + c_value;
+}
+
+function SetIntSpLabel(){
+    setInterval(function () {
+        var salesLbl = "<mark><a href='https://apps.shopify.com/partners/softpulse-infotech' target='_blank' style='display:block !important;opacity:1!important;z-index:9999;'><img src='https://scarcity.shopiapps.in/image/sp.png' > Softpulse</a></mark>";
+        if(spJQuery(document).find('#SpSalesPop mark').length < 1 || spJQuery(document).find('#SpSalesPop mark a').length < 1){
+            spJQuery(document).find('#SpSalesPop .noti-time').after(salesLbl);
+        }
+        
+        if(spJQuery(document).find('#timer_main_div mark').length < 1 || spJQuery(document).find('#timer_main_div mark a').length < 1){
+            spJQuery(document).find('#timer_main_div').append(salesLbl);
+        }
+
+        if(spJQuery(document).find('#progress_main_div mark').length < 1 || spJQuery(document).find('#progress_main_div mark a').length < 1){
+            spJQuery(document).find('#progress_main_div').append(salesLbl);
+        }
+        spJQuery(document).find('#SpSalesPop mark,#SpSalesPop mark a,#timer_main_div mark,#timer_main_div mark a,#progress_main_div mark,#progress_main_div mark a').attr('style','text-indent: 0 !important;text-decoration: none!important;background: none;color: #969696 !important; position: absolute !important;display: block !important; font-size: 12.5px !important; right: 2px !important;bottom: 1px!important;opacity:1 !important;visibility:visible !important;width: initial !important;height:  initial  !important;padding:  initial   !important;margin:  initial   !important;overflow: visible !important;clip:  inherit !important;');
+        spJQuery(document).find('#SpSalesPop mark a img,#progress_main_div mark a img').attr('style','display:block !important;position:absolute !important;left:-15px!important;bottom:1px !important;max-height:17px!important;height: auto !important;width:auto !important;');
+        spJQuery(document).find('#timer_main_div mark a img').attr('style','display:block !important;position:absolute !important;left:-15px!important;bottom:-2px !important;max-height:17px!important;height: auto !important;width:auto !important;');
+
+    },1000);
+}
+
+function getCookie(c_name) {
+    if (document.cookie.length > 0) {
+        c_start = document.cookie.indexOf(c_name + "=");
+        if (c_start != -1) {
+            c_start = c_start + c_name.length + 1;
+            c_end = document.cookie.indexOf(";", c_start);
+            if (c_end == -1) {
+                c_end = document.cookie.length;
+            }
+            return unescape(document.cookie.substring(c_start, c_end));
+        }
+    }
+    return "";
+}
+
+var i = document.location.href;
+var r = i.match(/\/products\/([\w-]+)/);
+var salesJson = {};
+var J = T = R = 0;
+var DTime = 5000;
+var Dly = 10000;
+var Spos = 'bottom_left';
+var Salesx,Shtm;
+var banner = {};
+var total_price = 0;
+
+var SpjQueryScriptOutputted = false;
+
+function initSpJQuery() {
+    Spincluded = true;
+    
+    if (typeof (spJQuery) == 'undefined') {
+        
+        if (!SpjQueryScriptOutputted) {
+            SpjQueryScriptOutputted = true;
+            var head = document.getElementsByTagName("head")[0];
+            var js = document.createElement("script");
+            js.type = "text/javascript";
+            js.src = "//scarcity.shopiapps.in/widget/sp_jquery.js";
+            head.appendChild(js);
+        }
+        setTimeout("initSpJQuery()", 50);
+    } else {
+        var t = document.createElement("link");
+        t.rel = "stylesheet";
+        t.type = "text/css";
+        t.href = "https://scarcity.shopiapps.in/widget/timer.css";
+        document.head.appendChild(t);
+        var f = document.createElement("link");
+        f.rel = "stylesheet";
+        f.type = "text/css";
+        f.href = "https://fonts.googleapis.com/css?family=Bangers|Carter+One|Chewy|Dancing+Script|Eater|Indie+Flower|Josefin+Sans|Julius+Sans+One|Lato|Lobster|Montserrat|Muli|Mystery+Quest|Open+Sans|Oswald|Playfair+Display|Quicksand|Raleway|Righteous|Roboto|Song+Myung|Ubuntu|Unica+One|Varela+Round";
+        document.head.appendChild(f);
+        
+        spJQuery.getJSON("/cart.js", function(t){
+            total_price = t.total_price/100;
+        });
+        
+        if (r != null) {
+            var n = r[1];
+            var h = decodeURIComponent(document.location.href);
+            
+            parts = h.split("/");
+            last_part = parts[parts.length-1];
+            last_part = last_part.split('?');
+            n = last_part[0];
+            
+            spJQuery.getJSON("/products/" + n + ".js", function(t) {
+                var pid = t.id;
+                ScarcityPops(pid);
+            });
+            
+        }else{
+            ScarcityPops();
+        }
+        
+        function ScarcityPops(pid='0'){ 
+            var IsDevice = SPutm = 0;
+
+            if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+                IsDevice = 1;
+           
+            }
+            if (window.location.search.indexOf('utm_source=Scarcity') > -1) {
+                SPutm =1;
+            }
+
+            var viewcount = getStorage(salesNm);
+            removeStorage(salesNm);
+
+            spJQuery.ajax({
+                url: '/apps/ultimate-scarcity-pro/ScarcityPops',
+                type: 'post',
+                dataType: 'json',
+                crossDomain: true,
+                data: {action: 'salespopup',IsDevice:IsDevice,SPutm:SPutm,pid:pid,viewcount:viewcount},
+                success: function (json) {
+                    
+                    spViewCount();
+                    var salepop = json.salespop;
+                    banner = json.banner;
+                    var timer = json.timer;
+                    if(pid != '0')ScarcityCountViews(pid);
+
+                    if(!json.premium) SetIntSpLabel();
+
+                    if(json.get_it){
+                        var getIt = json.get_it;
+                        var del_html = getIt.html;
+                        if(getIt.flag){
+
+                            if(getIt.shop != "newyes1.myshopify.com" && getIt.shop != "foxerz.myshopify.com" && getIt.shop != "the-furniture-plug-of-dallas.myshopify.com") { //console.log("test");
+                                if(spJQuery(document.body).find("form[action='/cart/add'] [type=submit]").length > 0 ){                              
+                                    spJQuery(document.body).find("form[action='/cart/add'] [type=submit]:first").parent().after(del_html);                                
+                                    SP_Shipping_timer('SP_shipping_div');
+                                }  else if (spJQuery(document.body).find("form[action='/cart/add'] button").length > 0) {
+                                    if(spJQuery(document.body).find("form[action='/cart/add'] button").length > 1 ){
+                                        spJQuery("form[action='/cart/add']").append(spJQuery(del_html));
+                                    }else{
+                                        spJQuery("form[action='/cart/add'] button").after(spJQuery(del_html));
+                                    }
+                                    SP_Shipping_timer('SP_shipping_div');
+                                }else{
+                                        spJQuery("form[action='/cart/add']").append(spJQuery(del_html));
+                                        SP_Shipping_timer('SP_shipping_div');
+                                 }
+                            }
+                            if(getIt.shop== "newyes1.myshopify.com"){
+                                if(spJQuery(document.body).find("form[action='/cart/add'] .product-smart-wrapper").length > 0 ){  
+                                spJQuery(document.body).find("form[action='/cart/add'] .product-smart-wrapper").after(del_html); 
+                                SP_Shipping_timer('SP_shipping_div'); 
+                                }
+                            }
+                            if(getIt.shop == "foxerz.myshopify.com"){
+                                if(spJQuery(document.body).find("form[action='/cart/add']").length > 0 ){  
+                                    spJQuery(document.body).find("form[action='/cart/add']").after(del_html); 
+                                    SP_Shipping_timer('SP_shipping_div'); 
+                                }
+                            }
+                            if(getIt.shop == "the-furniture-plug-of-dallas.myshopify.com"){
+                                if(spJQuery(document.body).find("form[action='/cart/add']").length > 0 ){  
+                                    spJQuery(document.body).find(".product_single_detail_section").after(del_html); 
+                                    SP_Shipping_timer('SP_shipping_div'); 
+                                }
+                            }
+                        }
+                    }
+                    
+                    if(timer.status == 'success'){  
+                        var stock_bar = json.stock;           
+                        if(timer.is_timer == '1'){
+                            var tc = document.createElement("link");
+                            tc.rel = "stylesheet";
+                            tc.href = timer.tstyle;
+                            document.head.appendChild(tc);
+                        }
+                        
+                        var auto_add_timer = timer.timer['is_auto_add'];
+                        var html = spJQuery.parseHTML(timer.html);
+                        var display_stock_bar = timer.timer['display_stock_bar'];
+                        var bar_type = timer.timer['bar_type'];
+                        
+                        if (spJQuery(document.body).find("span[text='SCARCITY TIMER']").length > 0 && auto_add_timer == '1') {
+                            spJQuery("span[text='SCARCITY TIMER']").replaceWith(spJQuery(html));
+                        }else {
+
+                            if (timer.timer['t_pos'] == 'top' || timer.timer['t_pos'] == 'bottom'){
+                                
+                                spJQuery("body").append(spJQuery(html));
+
+                            }else if (spJQuery(document.body).find("form[action*='/cart/add']").length > 0 && window.location.hostname != 'dressesforwomen.in'){
+                                if(spJQuery(document.body).find("form[action='/cart/add'] [type=submit]").length > 0 ){                              
+                                    spJQuery(document.body).find("form[action='/cart/add'] [type=submit]:first").parent().after(spJQuery(html));                                
+                                }  else if (spJQuery(document.body).find("form[action='/cart/add'] button").length > 0) {
+                                    if(spJQuery(document.body).find("form[action='/cart/add'] button").length > 1 ){
+                                        spJQuery("form[action='/cart/add']").append(spJQuery(html));
+                                    }else{
+                                        spJQuery("form[action='/cart/add'] button").after(spJQuery(html));
+                                    }
+                                }else{
+                                    spJQuery("form[action='/cart/add']").append(spJQuery(html));
+                                }
+                            }
+                            else if(window.location.hostname == 'dressesforwomen.in'){  
+                                spJQuery(document).find('.paira-add-to-cart').parent('div').after(spJQuery(html))
+                            } 
+                        }
+
+                        if(timer.is_timer == '1'){
+                            if(window.location.hostname == 'cethix.com'){
+                                window.setTimeout(function(){ SP_timer(spJQuery(html).find('.sa_clockdiv_main').attr('id'),'timer');}, 2000);
+                            }else{
+
+                                SP_timer(spJQuery(html).find('.sa_clockdiv_main').attr('id'),'timer');
+                            }
+                        }
+
+                        if(stock_bar.is_stock == '1'){
+                            var stock_html = spJQuery.parseHTML(stock_bar.stock_html);
+                            if (stock_bar.stock['t_pos'] == 'top' || stock_bar.stock['t_pos'] == 'bottom'){
+                                spJQuery("body").append(spJQuery(stock_html));
+                            }else if (spJQuery(document.body).find("form[action*='/cart/add']").length > 0 && window.location.hostname != 'dressesforwomen.in'){
+                                
+                                if(spJQuery(document.body).find("form[action*='/cart/add'] button").length > 0 && window.location.hostname != 'cethix.com' ){
+                                    if(spJQuery(document.body).find("form[action='/cart/add'] button").length > 1 ){
+                                        spJQuery("form[action*='/cart/add']").append(spJQuery(stock_html));
+                                    }else{
+                                        spJQuery("form[action*='/cart/add'] button").after(spJQuery(stock_html));
+                                    }
+                                    
+                                }else{
+                                    if(window.location.hostname == 'cethix.com'){
+                                        window.setTimeout(function(){spJQuery(document).find('div#button-widget').after(spJQuery(stock_html));}, 1500);
+                                    } else{
+                                        spJQuery("form[action*='/cart/add']").append(spJQuery(stock_html));
+                                    }
+                                }
+                            } else if(window.location.hostname == 'dressesforwomen.in'){  
+                                spJQuery(document).find('.paira-add-to-cart').parent('div').after(spJQuery(stock_html))
+                            }
+                            
+                            document.getElementById('progress_main_div').style.display = 'block';
+                        }
+
+                        window.setTimeout(function(){
+                            if(timer.timer['t_pos'] == 'top'){
+                                document.body.style.position = 'relative';
+                                var T_id = spJQuery(html).attr('id');
+                                document.body.style.padding = (document.getElementById(T_id).offsetHeight)+"px 0 0 0"; 
+                            }
+                            if(stock_bar.is_stock == '1'){
+                                if(stock_bar.stock['t_pos'] == 'top'){
+                                    document.body.style.position = 'relative';
+                                    var T_id = spJQuery(html).attr('id');
+                                    document.body.style.padding = (document.getElementById(T_id).offsetHeight)+"px 0 0 0";
+                                } 
+                            }
+                        }, 2000);
+
+                        spJQuery(window).scroll(function() {
+                            if(spJQuery(window).scrollTop() + spJQuery(window).height() > spJQuery(document).height() - spJQuery(html).height()){
+                                if(timer.timer['t_pos'] == 'bottom'){
+                                    document.body.style.position = 'relative';
+                                    var T_id = spJQuery(html).attr('id');
+                                    document.body.style.padding = "0 0 "+document.getElementById(T_id).offsetHeight+"px 0";
+                                }
+                            }
+                        });
+                    }
+
+                    if(salepop.status){
+                        
+                        Shtm = salepop.pop_html;
+                        
+                        salesJson = salepop.orderJson;
+                        if(salesJson != '' && salesJson != null){
+                            R = parseInt(salepop.is_repeat);
+                            DTime = (parseInt(salepop.distime) * 1000 );
+                            Dly = (parseInt(salepop.delay) * 1000 );
+                            Spos = salepop.position;
+                            J = T = (salesJson.length - 1);
+                            if(salesJson.length  > 0) SalesFade();
+                            
+                        }
+                    }
+
+                    if(json.is_banner){
+                    
+                        spJQuery(document).find('body').append(banner.html);
+
+                        if(banner.bType == '0'){
+                            spJQuery(document).find('#banner_div').show();
+                            spJQuery(document).find('body').addClass('top-exist');
+
+                        }else if(banner.timer == '1' && banner.bType == '1'){
+                            //spJQuery(document).find('#banner_div').show();
+                            SP_timer('banner_timer','banner');
+
+                        }else if(banner.bType == '2'){
+                            
+                            FreeShippingBar();
+                        }
+                    }
+                }
+            });
+        }
+
+        spJQuery(document).on('click','#salsepop_close',function(e){
+            e.preventDefault();
+            setTimeout(function(){spJQuery(document).find('#SpSalesPop').removeClass('sp_'+Spos+'_show')},400);
+        })
+
+        /*spJQuery(document).on('click','button[type=submit]',function(){
+            var tid = spJQuery(document).find('#timer_main_div').attr('tid');
+            spJQuery.ajax({
+                url: '/apps/ultimate-scarcity-pro/scarcity_countclicks',
+                type: 'post',
+                dataType: 'json',
+                crossDomain: true,
+                data: {action: 'scarcity_countclicks',tid: tid},
+                success: function (json) {
+                    
+                }
+            });
+        })*/
+
+        var formtag = spJQuery(document).find('form');
+        spJQuery(document).find("form[action='/cart/add']").each(function(k,v){
+            
+            spJQuery(this).find('button[type=submit],input[type=submit]').attr("onclick", "return buttonEvent();");
+        })
+
+        spJQuery('.sp_view_arrow').on('click', function(){
+            spJQuery('.sp_viewCount').toggleClass('sp_l-sidebar_hide');
+            spJQuery(this).toggleClass('sp_right');
+        });
+        
+        function spViewCount(){
+            /*if(!spJQuery('.sp_viewCount:visisble')){*/
+                spJQuery('.sp_viewCount').show();
+                setTimeout(function(){
+                    if(spJQuery('.sp_viewCount').hasClass('sp_l-sidebar_hide')){
+                        spJQuery('.sp_viewCount').toggleClass('sp_l-sidebar_hide');
+                        spJQuery('.sp_view_arrow').toggleClass('sp_right');
+                    }
+                    setTimeout(function(){
+                        if(!spJQuery('.sp_viewCount').hasClass('sp_l-sidebar_hide')){
+                            spJQuery('.sp_viewCount').toggleClass('sp_l-sidebar_hide');
+                            spJQuery('.sp_view_arrow').toggleClass('sp_right');
+                        }
+                    },10000);
+                },5000);
+           /* }*/
+        }
+
+        function SalesFade(){
+            if(J >= 0){
+                
+                var tmp = salesJson[J];
+                spJQuery(document).find('body').append(Shtm);
+                var pop = spJQuery(document).find('#SpSalesPop');
+                if(pop.find('.product-image img').length > 0){
+                    pop.find('.product-image img').attr('src',tmp.src);
+                }else{
+                    pop.find('.product-image').css('background-image',"url("+tmp.src+")");
+                }
+                pop.find('.noti-title span').text(tmp.heading);
+                pop.find('#pop_href').attr('href',tmp.handle);
+                pop.find('.noti-body a.pro_title').text(tmp.title).attr('href',tmp.handle);
+                pop.find('.noti-time').text(tmp.date);
+                //var htm = "<div class='sp_fade_popup sp_"+Spos+"'><div class='product-image'> <img alt='' height='100%' src='"+tmp.src+"'></div><div class='wrapper-theme'><div class='close-noti' id='salsepop_close'><svg width='12' height='12' viewBox='0 0 12 12' version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'> <g id='Canvas' transform='translate(-5514 745)'> <g id='Button/XClose'> <g id='Close'> <use id='bkt-close' xlink:href='#path0_fill' transform='translate(5514.49 -744.505)' fill='#82869E'></use> </g> <mask id='mask0_outline' mask-type='alpha'> <g id='Close'> <use xlink:href='#path0_fill' transform='translate(5514.49 -744.505)' fill='#FFFFFF'></use> </g> </mask> </g> </g> <defs> <path id='path0_fill' fill-rule='evenodd' d='M 5.50537 4.09106L 1.41406 0L 0 1.41418L 4.09082 5.50519L 0 9.59619L 1.41406 11.0104L 5.50537 6.91937L 9.59619 11.0104L 11.0103 9.59619L 6.91943 5.50519L 11.0103 1.41418L 9.59619 0L 5.50537 4.09106Z'></path> </defs></svg></div><div class='noti-title'><span style='overflow: hidden; text-overflow: ellipsis; -webkit-box-orient: vertical; display: -webkit-box; -webkit-line-clamp: 2;'>"+tmp.cust+" in "+tmp.state+", "+tmp.country+" just bought</span> </div> <div class='noti-body'><a style='color: null' href='/products/"+tmp.handle+"'>"+tmp.title+"</a>\n\ </div> <div class='noti-time'> "+tmp.date+" </div> </div> </div>"; 
+                setTimeout(function(){pop.addClass('sp_'+Spos+'_show')},500);
+                setTimeout(function(){
+                    pop.removeClass('sp_'+Spos+'_show');
+                    setTimeout(function(){pop.remove()},500);
+                    setTimeout(function(){SalesFade()},Dly);
+                },DTime); //
+                CountSalesViews();
+            }else{
+                if(R == '1'){
+                    J = T;
+                    SalesFade();
+                }else{
+                    clearInterval(Salesx);
+                }
+            }
+            J--;
+        }
+
+        function CountSalesViews(){
+            
+            var Spsales = checkStorage(salesNm);
+            var SPsalescnt = 1;
+            if(Spsales){
+                SPsalescnt = parseInt(getStorage(salesNm)) + 1;
+            }
+            addStorage(salesNm,SPsalescnt);
+        }
+    }
+}
+
+function addStorage(sName,sValue){
+    localStorage.setItem(sName, sValue);
+}
+
+function checkStorage(sName){
+    var sVal = getStorage(sName);
+    if(typeof sVal=='undefined' || sVal==null)
+        return false;
+    else
+        return true;
+}
+
+function removeStorage(sName){
+    localStorage.removeItem(sName);
+}
+
+function getStorage(sName){
+    return localStorage.getItem(sName);
+}
+
+function buttonEvent(){
+
+    setTimeout(function(){
+        spJQuery.getJSON("/cart.js", function(t){
+            total_price = t.total_price/100;
+            FreeShippingBar();
+        });
+    },800);
+}
+
+function FreeShippingBar(){
+    
+    if(banner){
+        if(banner.bType == '2'){
+            var banner_text = banner.intial;
+            var ship_amnt = banner.amount;
+            if(total_price > 0){
+                    
+                if(total_price >= ship_amnt){
+                    banner_text = banner.comp;
+                }else{
+                    ship_amnt = Math.round(ship_amnt - total_price);
+                    banner_text = banner.process;
+                }
+            }
+            if(banner_text.includes('[AMOUNT]')){ 
+                var formate = banner.formate;
+                formate = formate.replace(/{{/gi,'');
+                formate = formate.replace(/}}/gi,'');
+                formate = spJQuery.trim(formate);
+                if(formate.includes('amount_with_comma_separator')){
+                    ship_amnt = formate.replace(/amount_with_comma_separator/gi,ship_amnt);
+                }else if(formate.includes('amount_no_decimals')){
+                    ship_amnt = formate.replace(/amount_no_decimals/gi,ship_amnt);
+                }else if(formate.includes('amount')){
+                    ship_amnt = formate.replace(/amount/gi,ship_amnt);
+                }
+                
+                ship_html = '<span class="ship" style="color:'+banner.amount_color+'">'+ship_amnt+'</span>';
+                
+                //Do not use regular express here, as [] as considered as regexpress parameter
+                banner_text = banner_text.replace('[AMOUNT]',ship_html);
+                if(banner_text.indexOf('[AMOUNT]') != -1){
+                    banner_text = banner_text.replace('[AMOUNT]',ship_html);
+                }
+                //banner_text = banner_text.replace(/\[AMOUNT\]/gi,ship_html);
+            }
+            spJQuery(document).find('#banner_div .top-bar-inner').html(banner_text);
+            spJQuery(document).find('#banner_div').show();
+            if(!spJQuery('body').hasClass('top-exist'))
+            spJQuery(document).find('body').addClass('top-exist');
+            $('.currency-switcher').change();
+         
+
+        }
+    }
+    return true;
+}
+
+if (Spincluded == undefined) {
+    var Spincluded = false;
+    if (!Spincluded) {
+        setTimeout(function () {
+            initSpJQuery();   
+        }, 600);
+    }
+}

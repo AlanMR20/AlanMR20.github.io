@@ -1,0 +1,164 @@
+#sct-timer-32400 .sct-timer:not(.sct-timer-mobile)[data-editable="general"] {
+	background-color: #1E2D7D;
+	padding-top: 8px;
+	border-color: #ECF0F8;
+	border-width: 0;
+	border-radius: 20px;
+	color: rgba(255,105,180,0.9);
+	-webkit-mask-image: none;
+	background-image: none;
+	background-position: 0% 0%;
+	padding-bottom: 8px;
+}
+#sct-timer-32400 .sct-timer:not(.sct-timer-mobile) [data-editable="message-before-countdown"] {
+	color: #ffffff;
+	font-family: Montserrat;
+	font-style: normal;
+	font-weight: bold;
+	text-decoration: none;
+	font-size: 24px;
+}
+#sct-timer-32400 .sct-timer:not(.sct-timer-mobile) [data-editable="countdown"] {
+	background-color: #FFFFFF;
+	box-shadow: 0px 12px 36px rgba(0,38,111,0);
+	color: #FF0000;
+	border-color: #ECF0F8;
+	border-width: 1px;
+	border-radius: 8px;
+	font-family: Montserrat;
+	font-size: 36px;
+}
+#sct-timer-32400 .sct-timer:not(.sct-timer-mobile) [data-editable="countdown-labels"] {
+	color: #030303;
+	font-family: Montserrat;
+	font-style: normal;
+	font-weight: bold;
+	text-decoration: none;
+	font-size: 11px;
+}
+#sct-timer-32400 .sct-timer:not(.sct-timer-mobile) [data-editable="countdown-colons"] {
+	color: #FFFFFF;
+	font-family: Montserrat;
+	font-size: 36px;
+	height: 36px;
+}
+#sct-timer-32400 .sct-timer:not(.sct-timer-mobile) [data-editable="message-after-countdown"] {
+	color: #ffffff;
+	font-family: Montserrat;
+	font-style: normal;
+	font-weight: bold;
+	text-decoration: none;
+	font-size: 17px;
+}
+#sct-timer-32400 .sct-timer:not(.sct-timer-mobile) [data-editable="link"] {
+	color: #FF9E0D;
+	font-family: Montserrat;
+	font-style: normal;
+	font-weight: normal;
+	text-decoration: underline;
+	font-size: 18px;
+}
+#sct-timer-32400 .sct-timer:not(.sct-timer-mobile) [data-editable="button"] {
+	background-color: #00AA00;
+	border-color: #ffffff;
+	border-width: 1px;
+	border-radius: 33px;
+	color: #ffffff;
+	font-family: Montserrat;
+	font-style: normal;
+	font-weight: bold;
+	text-decoration: none;
+	font-size: 13px;
+	padding-top: 2px;
+	padding-left: 1px;
+	padding-bottom: 2px;
+	padding-right: 1px;
+}
+#sct-timer-32400 .sct-timer:not(.sct-timer-mobile) [data-editable="button-link"] {
+	text-decoration: none;
+}
+#sct-timer-32400 .sct-timer:not(.sct-timer-mobile) [data-editable="pattern"] {
+	background-color: rgba(0, 0, 0, 0);
+	-webkit-mask-image: none;
+}
+#sct-timer-32400 .sct-timer.sct-timer-mobile[data-editable="general"] {
+	background-color: #1E2D7D;
+	padding-top: 12px;
+	border-color: #ECF0F8;
+	border-width: 0;
+	border-radius: 8px;
+	color: rgba(255,105,180,0.9);
+	-webkit-mask-image: none;
+	background-image: none;
+	background-position: 0% 0%;
+	padding-bottom: 12px;
+}
+#sct-timer-32400 .sct-timer.sct-timer-mobile [data-editable="message-before-countdown"] {
+	color: #ffffff;
+	font-family: Montserrat;
+	font-style: normal;
+	font-weight: bold;
+	text-decoration: none;
+	font-size: 18px;
+}
+#sct-timer-32400 .sct-timer.sct-timer-mobile [data-editable="countdown"] {
+	background-color: #FFFFFF;
+	box-shadow: 0px 12px 36px rgba(0,38,111,0);
+	color: #FF0000;
+	border-color: #ECF0F8;
+	border-width: 1px;
+	border-radius: 8px;
+	font-family: Montserrat;
+	font-size: 18px;
+}
+#sct-timer-32400 .sct-timer.sct-timer-mobile [data-editable="countdown-labels"] {
+	color: #030303;
+	font-family: Montserrat;
+	font-style: normal;
+	font-weight: bold;
+	text-decoration: none;
+	font-size: 8px;
+}
+#sct-timer-32400 .sct-timer.sct-timer-mobile [data-editable="countdown-colons"] {
+	color: #FFFFFF;
+	font-family: Montserrat;
+	font-size: 18px;
+	height: 18px;
+}
+#sct-timer-32400 .sct-timer.sct-timer-mobile [data-editable="message-after-countdown"] {
+	color: #ffffff;
+	font-family: Montserrat;
+	font-style: normal;
+	font-weight: bold;
+	text-decoration: none;
+	font-size: 14px;
+}
+#sct-timer-32400 .sct-timer.sct-timer-mobile [data-editable="link"] {
+	color: #FF9E0D;
+	font-family: Montserrat;
+	font-style: normal;
+	font-weight: normal;
+	text-decoration: underline;
+	font-size: 14px;
+}
+#sct-timer-32400 .sct-timer.sct-timer-mobile [data-editable="button"] {
+	background-color: #00AA00;
+	border-color: #ffffff;
+	border-width: 1px;
+	border-radius: 4px;
+	color: #ffffff;
+	font-family: Montserrat;
+	font-style: normal;
+	font-weight: bold;
+	text-decoration: none;
+	font-size: 15px;
+	padding-top: 0px;
+	padding-bottom: 0px;
+}
+#sct-timer-32400 .sct-timer.sct-timer-mobile [data-editable="button-link"] {
+	text-decoration: none;
+}
+#sct-timer-32400 .sct-timer.sct-timer-mobile [data-editable="pattern"] {
+	background-color: rgba(0, 0, 0, 0);
+	-webkit-mask-image: none;
+}
